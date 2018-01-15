@@ -1,0 +1,11 @@
+build
+/.apt_generated/
+/.gradle/
+/bin/
+**/.DS_Store
+.vscode
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.wst.common.component
+.settings/org.eclipse.wst.common.project.facet.core.xml

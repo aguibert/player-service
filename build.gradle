@@ -1,0 +1,57 @@
+apply plugin: 'liberty'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        //classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:2.0.1'
+        classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:2.1.1-SNAPSHOT'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	// TODO figure out how to pull in a recent beta to get EE8 stuff
+    compileOnly 'javax:javaee-api:7.0'
+    libertyRuntime 'io.openliberty:openliberty-runtime:17.0.0.4'
+}
+
+ext {
+	httpPort = 8080
+	httpsPort = 8443
+}
+
+liberty {
+	server {
+		name = "player-service-server"
+		dropins = [war]
+		bootstrapProperties = [
+			'httpPort': httpPort, 
+			'httpsPort': httpsPort,
+		]
+	}
+}
+
+libertyStart.dependsOn 'libertyStop'
+libertyRun.dependsOn 'libertyStop'
+libertyStart.doLast {
+	println "Application available at: http://localhost:${httpPort}/${project.name}"
+}
+
+// Some convenience tasks
+libertyCreate.dependsOn 'libertyStop'
+task start { dependsOn 'libertyStart' }
+task stop  { dependsOn 'libertyStop' }
+task open {
+    doLast {
+        java.awt.Desktop.desktop.browse "http://localhost:${httpPort}/${project.name}".toURI()
+    }
+}
